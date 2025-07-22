@@ -25,7 +25,7 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 
 ## ✅ TODO
 
-- [ ] Fetch user stats from the [Root-Me API](https://api.www.root-me.org/)
+- [x] Fetch user stats from the [Root-Me API](https://api.www.root-me.org/)
 
 - [ ] Generate dynamic SVG badge
 
