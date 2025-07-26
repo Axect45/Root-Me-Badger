@@ -21,6 +21,9 @@
 #                                                      `>>>
 
 import argparse
+import os
+import tempfile
+
 from rootme import *
 from badge import *
 
@@ -40,6 +43,10 @@ def parse_args():
 
 
 def main(args):
+
+    # Retrieve base directory
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     # Fetch user data from Root-Me API
     user_data = get_rootme_user_info(args.user_id, args.api_key)
     if (user_data.get('error')):
@@ -47,26 +54,26 @@ def main(args):
         exit(1)
 
     # Download the profile picture
-    if (not download_rootme_image(user_data.get('logo_url'), "profile_picture.png")):
-        exit(1)
 
-    # Retrieve the user's most played rubriques
-    user_data["most_played"] = []
-    for rub, v in get_most_played_rubriques(user_data)[:3]:
-        user_data["most_played"].append((rubrique_lookup_table[int(rub)], v))
+    with tempfile.NamedTemporaryFile(prefix='badger_pp_', suffix='.png') as tmp_file:
+        tmp_profile_picture_path = tmp_file.name
 
-    # Get the total number of users
-    # user_data["total_users"] = get_number_of_users(args.api_key)
-    # if (user_data["total_users"] < 0):
-    #     exit(1)
+        if (not download_rootme_image(user_data.get('logo_url'), tmp_profile_picture_path)):
+            exit(1)
 
-    # Get the number of ranked users
-    user_data["total_users"] = get_number_of_ranked_users(args.api_key)
-    if (user_data["total_users"] < 0):
-        exit(1)
+        # Retrieve the user's most played rubriques
+        user_data["most_played"] = []
+        for rub, v in get_most_played_rubriques(user_data)[:3]:
+            user_data["most_played"].append(
+                (rubrique_lookup_table[int(rub)], v))
 
-    # Create the badge
-    create_badge(user_data)
+        # Get the number of ranked users
+        user_data["total_users"] = get_number_of_ranked_users(args.api_key)
+        if (user_data["total_users"] < 0):
+            exit(1)
+
+        # Create the badge
+        create_badge(user_data, BASE_DIR, tmp_profile_picture_path)
 
     exit(0)
 

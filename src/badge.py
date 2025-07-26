@@ -1,81 +1,78 @@
 from PIL import Image, ImageDraw, ImageFont
 
 
-def get_rank_logo(points: int) -> Image:
+def get_rank_logo(points: int, base_dir: str) -> Image:
     """
     Returns the rank logo based on the user's points.
 
     Args:
         points (int): The user's points.
+        base_dir (str): The base directory.
 
     Returns:
         Image: The rank logo image.
     """
     if points < 100:
-        return Image.open("assets/visitor.png")
+        return Image.open(f"{base_dir}/assets/visitor.png")
     elif points < 500:
-        return Image.open("assets/curious.png")
+        return Image.open(f"{base_dir}/assets/curious.png")
     elif points < 2481:
-        return Image.open("assets/trainee.png")
+        return Image.open(f"{base_dir}/assets/trainee.png")
     elif points < 4463:
-        return Image.open("assets/insider.png")
+        return Image.open(f"{base_dir}/assets/insider.png")
     elif points < 10562:
-        return Image.open("assets/enthusiast.png")
+        return Image.open(f"{base_dir}/assets/enthusiast.png")
     elif points < 16852:
-        return Image.open("assets/hacker.png")
+        return Image.open(f"{base_dir}/assets/hacker.png")
     elif points < 24285:
-        return Image.open("assets/elite.png")
+        return Image.open(f"{base_dir}/assets/elite.png")
     else:
-        return Image.open("assets/legend.png")
+        return Image.open(f"{base_dir}/assets/legend.png")
 
 
-def create_badge(user_data: dict = None) -> None:
+def create_badge(user_data: dict, base_dir: str, path_profile_picture: str) -> None:
     """
     Creates a badge image with the user's profile picture and name.
     Args:
         user_data (dict): A dictionary containing user information, including the profile picture URL and name.
+        base_dir (str): The base directory.
+        path_profile_picture (str): The path to the profile picture.
     """
     # Create a new RGB image (width=200, height=100), white background
     image = Image.new("RGB", (800, 400), color="white")
 
-    # Set the font to Open Sans
-    # Note: You may need to install the font or use a default one
+    # Load fonts
     font_bold = ImageFont.truetype(
-        "fonts/OpenSans_Condensed-Regular.ttf", 40)
-
-    # Get font metrics
+        f"{base_dir}/fonts/OpenSans_Condensed-Regular.ttf", 40)
     ascent_font_bold, descent_font_bold = font_bold.getmetrics()
 
     font = ImageFont.truetype(
-        "fonts/OpenSans_Condensed-Regular.ttf", 30)
-
-    # Get font metrics
+        f"{base_dir}/fonts/OpenSans_Condensed-Regular.ttf", 30)
     ascent_font, descent_font = font.getmetrics()
 
     font_mini = ImageFont.truetype(
-        "fonts/OpenSans_Condensed-Regular.ttf", 18)
-
-    # Get font metrics
+        f"{base_dir}/fonts/OpenSans_Condensed-Regular.ttf", 18)
     ascent_font_mini, descent_font_mini = font_mini.getmetrics()
 
     font_italic = ImageFont.truetype(
-        "fonts/OpenSans_Condensed-Italic.ttf", 20)
-
-    # Get font metrics
+        f"{base_dir}/fonts/OpenSans_Condensed-Italic.ttf", 20)
     ascent_font_italic, descent_font_italic = font_italic.getmetrics()
 
-    # Draw something on it
+    # Initialize ImageDraw
     draw = ImageDraw.Draw(image)
 
+    # Calculate positions
     border = image.height * 5 // 100
     profice_pic_size = image.height - border * 2
     rootme_logo_size = image.height * 20 // 100
     logo_pos_x = 3 * border + profice_pic_size
     text_pos_x = logo_pos_x + font_bold.size + border
     text_pos_y = int(1.8 * border)
+    logo_size = font_bold.size
+    line_height = logo_size * 40 // 100 + text_pos_y
 
     # Add the profile picture in the left side
-    profile_pic = Image.open("profile_picture.png")
+    profile_pic = Image.open(path_profile_picture)
     profile_pic = profile_pic.resize(
         (profice_pic_size, profice_pic_size))
 
@@ -83,19 +80,13 @@ def create_badge(user_data: dict = None) -> None:
     image.paste(profile_pic, (border, border))
 
     # Add the Root-Me logo in the right side
-    rootme_logo = Image.open("assets/rootme_logo.png")
+    rootme_logo = Image.open(f"{base_dir}/assets/rootme_logo.png")
     rootme_logo = rootme_logo.resize(
         (rootme_logo_size, rootme_logo_size))
 
-    # Logo Size
-    logo_size = font_bold.size
-
-    # Line Height
-    line_height = logo_size * 40 // 100 + text_pos_y
-
     # Row 1
     y1 = text_pos_y
-    rank_logo = get_rank_logo(int(user_data.get("score", 0)))
+    rank_logo = get_rank_logo(int(user_data.get("score", 0)), base_dir)
     rank_logo = rank_logo.resize(
         (logo_size, logo_size))
     image.paste(rank_logo, (logo_pos_x, y1), rank_logo)
@@ -105,7 +96,7 @@ def create_badge(user_data: dict = None) -> None:
 
     # Row 2: User Rank
     y2 = y1 + line_height
-    points_logo = Image.open("assets/points.png")
+    points_logo = Image.open(f"{base_dir}/assets/points.png")
     points_logo = points_logo.resize(
         (logo_size, logo_size))
     image.paste(points_logo, (logo_pos_x, y2), points_logo)
@@ -115,7 +106,7 @@ def create_badge(user_data: dict = None) -> None:
 
     # Row 3: User Position
     y3 = y2 + line_height
-    classement_logo = Image.open("assets/classement.png")
+    classement_logo = Image.open(f"{base_dir}/assets/classement.png")
     classement_logo = classement_logo.resize(
         (logo_size, logo_size))
     image.paste(classement_logo, (logo_pos_x, y3), classement_logo)
@@ -127,20 +118,14 @@ def create_badge(user_data: dict = None) -> None:
               f"{user_position} / {total_users} ({round(100 * user_position / total_users, 2)}%)", fill="black", font=font)
 
     # Paste the Root-Me logo in the bottom right corner
-    # image.paste(rootme_logo, (image.width - rootme_logo.width,
-    #                          image.height - rootme_logo.height - border // 4), rootme_logo)
     image.paste(rootme_logo, (image.width - rootme_logo.width,
                               border // 4), rootme_logo)
-
-    # Quote
-    # draw.text(((image.width + profice_pic_size - rootme_logo_size) // 2, image.height - border),
-    #          '“x86 - 0xdeadbeef”', fill="black", font=font_italic, anchor="mb")
 
     y_medal = y3 + line_height + int(4.5 * border)
     # Paste Silver Medal
     x1_medal = text_pos_x - int(1.2 * border)
 
-    silver_medal_logo = Image.open("assets/silver_medal.png")
+    silver_medal_logo = Image.open(f"{base_dir}/assets/silver_medal.png")
 
     ratio = (logo_size / silver_medal_logo.width) * 0.75
     silver_medal_logo = silver_medal_logo.resize(
@@ -153,7 +138,7 @@ def create_badge(user_data: dict = None) -> None:
     # Paste Gold Medal
     x2_medal = x1_medal + logo_size + 4 * border
 
-    gold_medal_logo = Image.open("assets/gold_medal.png")
+    gold_medal_logo = Image.open(f"{base_dir}/assets/gold_medal.png")
     gold_medal_logo = gold_medal_logo.resize(
         (int(gold_medal_logo.width * ratio), int(gold_medal_logo.height * ratio)))
     image.paste(gold_medal_logo, (x2_medal,
@@ -165,7 +150,7 @@ def create_badge(user_data: dict = None) -> None:
     # Paste Bronze Medal
     x3_medal = x2_medal + logo_size + 4 * border
 
-    bronze_medal_logo = Image.open("assets/bronze_medal.png")
+    bronze_medal_logo = Image.open(f"{base_dir}/assets/bronze_medal.png")
     bronze_medal_logo = bronze_medal_logo.resize(
         (int(bronze_medal_logo.width * ratio), int(bronze_medal_logo.height * ratio)))
     image.paste(bronze_medal_logo, (x3_medal, y_medal), bronze_medal_logo)
@@ -178,4 +163,4 @@ def create_badge(user_data: dict = None) -> None:
               "Most Played", fill="black", font=font_italic, anchor="mt")
 
     # Save to file
-    image.save("badge.png")
+    image.save(f"{base_dir}/badge.png")
