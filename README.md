@@ -4,7 +4,7 @@
 
 > 🏁 **Display your Root-Me CTF progress proudly on your GitHub!**
 
-**RootMeBadger** is a lightweight, open-source tool that generates a dynamic badge summarizing your progress on [Root-Me](https://www.root-me.org/), the cybersecurity and CTF platform.  
+**Root-Me-Badger** is a lightweight, open-source tool that generates a dynamic badge summarizing your progress on [Root-Me](https://www.root-me.org/), the cybersecurity and CTF platform.  
 Easily embed a live badge into your GitHub profile or repo README to showcase your hacking journey.
 
 ---

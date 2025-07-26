@@ -1,0 +1,37 @@
+name: Update RootMe Badge
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  workflow_dispatch:      # Allow manual runs
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate badge
+        env:
+          ROOTME_USER_ID: ${{ secrets.ROOTME_USER_ID }}
+          ROOTME_API_KEY: ${{ secrets.ROOTME_API_KEY }}
+        run: |
+          python3 src/badger.py --user-id $ROOTME_USER_ID --api-key $ROOTME_API_KEY --output badge.png
+
+      - name: Commit and push badge
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add badge.png
+          git commit -m "Update RootMe badge [skip ci]" || echo "No changes to commit"
+          git push
