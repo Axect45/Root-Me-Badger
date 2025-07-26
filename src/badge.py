@@ -168,5 +168,4 @@ def create_badge(user_data: dict, base_dir: str, path_profile_picture: str, path
               "Most Played", fill="black", font=font_italic, anchor="mt")
 
     # Save to file
-    print(path_badge)
     image.save(path_badge)
