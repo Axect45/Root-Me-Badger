@@ -36,7 +36,7 @@ def parse_args():
                         help="Your Root-Me User ID - you can find it in https://www.root-me.org/?page=preferences")
     parser.add_argument("--api-key", type=str, required=True,
                         help="Your Root-Me API KEY - you can find it in https://www.root-me.org/?page=preferences")
-    parser.add_argument("--output", type=str, default="badge.png",
+    parser.add_argument("--output", type=str, default=None,
                         help="Output filename for the badge")
 
     return parser.parse_args()
@@ -73,7 +73,8 @@ def main(args):
             exit(1)
 
         # Create the badge
-        create_badge(user_data, BASE_DIR, tmp_profile_picture_path)
+        create_badge(user_data, BASE_DIR, tmp_profile_picture_path,
+                     path_badge=args.output)
 
     exit(0)
 

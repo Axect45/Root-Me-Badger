@@ -30,7 +30,7 @@ def get_rank_logo(points: int, base_dir: str) -> Image:
         return Image.open(f"{base_dir}/assets/legend.png")
 
 
-def create_badge(user_data: dict, base_dir: str, path_profile_picture: str) -> None:
+def create_badge(user_data: dict, base_dir: str, path_profile_picture: str, path_badge: str = None) -> None:
     """
     Creates a badge image with the user's profile picture and name.
     Args:
@@ -38,7 +38,12 @@ def create_badge(user_data: dict, base_dir: str, path_profile_picture: str) -> N
         base_dir (str): The base directory.
         path_profile_picture (str): The path to the profile picture.
     """
-    # Create a new RGB image (width=200, height=100), white background
+
+    # Check if path_badge is provided, otherwise set a default path
+    if path_badge is None:
+        path_badge = f"{base_dir}/badge.png"
+
+    # Create a white background
     image = Image.new("RGB", (800, 400), color="white")
 
     # Load fonts
@@ -163,4 +168,5 @@ def create_badge(user_data: dict, base_dir: str, path_profile_picture: str) -> N
               "Most Played", fill="black", font=font_italic, anchor="mt")
 
     # Save to file
-    image.save(f"{base_dir}/badge.png")
+    print(path_badge)
+    image.save(path_badge)
