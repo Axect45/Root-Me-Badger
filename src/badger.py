@@ -47,18 +47,22 @@ def main(args):
     # Retrieve base directory
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+    # Initialize Session
+    session = requests.Session()
+
     # Fetch user data from Root-Me API
-    user_data = get_rootme_user_info(args.user_id, args.api_key)
+    user_data = get_rootme_user_info(
+        args.user_id, args.api_key, session=session)
     if (user_data.get('error')):
         print(f"Error fetching user data: {user_data['error']}")
         exit(1)
 
-    # Download the profile picture
-
+    # Create a temporary file for the profile picture
     with tempfile.NamedTemporaryFile(prefix='badger_pp_', suffix='.png') as tmp_file:
         tmp_profile_picture_path = tmp_file.name
 
-        if (not download_rootme_image(user_data.get('logo_url'), tmp_profile_picture_path)):
+        # Download the profile picture
+        if (not download_rootme_image(user_data.get('logo_url'), tmp_profile_picture_path, session=session)):
             exit(1)
 
         # Retrieve the user's most played rubriques
@@ -68,7 +72,8 @@ def main(args):
                 (rubrique_lookup_table[int(rub)], v))
 
         # Get the number of ranked users
-        user_data["total_users"] = get_number_of_ranked_users(args.api_key)
+        user_data["total_users"] = get_number_of_ranked_users(
+            args.api_key, session=session)
         if (user_data["total_users"] < 0):
             exit(1)
 
@@ -76,6 +81,7 @@ def main(args):
         create_badge(user_data, BASE_DIR, tmp_profile_picture_path,
                      path_badge=args.output)
 
+    session.close()
     exit(0)
 
 

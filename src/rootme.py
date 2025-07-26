@@ -15,13 +15,14 @@ rubrique_lookup_table = {
 }
 
 
-def get_rootme_user_info(user_id: int, api_key: str) -> dict:
+def get_rootme_user_info(user_id: int, api_key: str, session: requests.Session = None) -> dict:
     """
     Fetches Root-Me user information by user ID.
 
     Args:
         user_id (int): The Root-Me user ID.
         api_key (str): The Root-Me API KEY.
+        session (requests.Session, optional): An optional requests session to use for the request.
 
     Returns:
         dict: A dictionary containing user information if successful, or an error message.
@@ -29,8 +30,11 @@ def get_rootme_user_info(user_id: int, api_key: str) -> dict:
 
     url = f"https://api.www.root-me.org/auteurs/{user_id}"
 
+    if session is None:
+        session = requests.Session()
+
     try:
-        response = requests.get(url, cookies={"api_key": api_key})
+        response = session.get(url, cookies={"api_key": api_key})
         response.raise_for_status()  # Raise an exception for HTTP errors
 
         return response.json()
@@ -43,13 +47,14 @@ def get_rootme_user_info(user_id: int, api_key: str) -> dict:
         return {"error": f"An unexpected error occurred: {err}"}
 
 
-def download_rootme_image(url_path: str, save_path: str) -> bool:
+def download_rootme_image(url_path: str, save_path: str, session: requests.Session = None) -> bool:
     """
     Downloads an image from a given URL and saves it to the specified path.
 
     Args:
         url_path (str): The URL path of the image to download from root-me.org.
         save_path (str): The local path where the image will be saved.
+        session (requests.Session, optional): An optional requests session to use for the request.
 
     Returns:
         bool: True if the download was successful, False otherwise.
@@ -57,8 +62,11 @@ def download_rootme_image(url_path: str, save_path: str) -> bool:
 
     url = f"https://api.www.root-me.org/{url_path}"
 
+    if session is None:
+        session = requests.Session()
+
     try:
-        response = requests.get(url)
+        response = session.get(url)
         response.raise_for_status()  # Raise an exception for HTTP errors
 
         with open(save_path, 'wb') as file:
@@ -91,20 +99,25 @@ def get_most_played_rubriques(user_data: dict) -> list:
     return sorted(played_rubriques.items(), key=lambda x: x[1], reverse=True)
 
 
-def get_number_of_users(api_key: str) -> int:
+def get_number_of_users(api_key: str, session: requests.Session = None) -> int:
     """
     Fetches the total number of users from Root-Me.
 
     Args:
         api_key (str): The Root-Me API KEY.
+        session (requests.Session, optional): An optional requests session to use for the request.
 
     Returns:
         int: The total number of users.
     """
+
     url = "https://api.www.root-me.org/auteurs?debut_auteurs=9999999"
 
+    if session is None:
+        session = requests.Session()
+
     try:
-        response = requests.get(url, cookies={"api_key": api_key})
+        response = session.get(url, cookies={"api_key": api_key})
         response.raise_for_status()  # Raise an exception for HTTP errors
 
         return int(list(response.json()[0].items())[-1][1].get('id_auteur'))
@@ -114,16 +127,22 @@ def get_number_of_users(api_key: str) -> int:
         return -1
 
 
-def get_number_of_ranked_users(api_key: str) -> int:
+def get_number_of_ranked_users(api_key: str, session: requests.Session = None) -> int:
     """
     Fetches the total number of ranked users from Root-Me.
 
     Args:
         api_key (str): The Root-Me API KEY.
+        session (requests.Session, optional): An optional requests session to use for the request.
+
     Returns:
         int: The total number of ranked users.
     """
+
     url = "https://api.www.root-me.org/classement?debut_classement=9999999"
+
+    if session is None:
+        session = requests.Session()
 
     try:
         response = requests.get(url, cookies={"api_key": api_key})
