@@ -12,7 +12,9 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 ## 🚀 Features
 
 - Fetches your Root-Me stats automatically
-- Retrieve your points and position in the Root-Me ladder
+- Retrieves your points and position in the Root-Me ladder
+- Generates a dynamic badge image
+- Easy to integrate into GitHub READMEs or personal websites
 
 ---
 
@@ -22,10 +24,35 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 
 ---
 
-## 🛠️ Usage
+## ⚡ Quick Start
 
-```
-badger.py --user-id USER_ID --api-key API_KEY [--output OUTPUT]
+1. **Clone the repository**
+   ```sh
+   git clone https://github.com/Axect45/Root-Me-Badger.git
+   cd root-me-badger
+   ```
+
+2. **Install dependencies**
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+3. **Get your Root-Me User ID and API Key**
+   - Go to [Root-Me Preferences](https://www.root-me.org/?page=preferences) to find your credentials.
+
+4. **Generate your badge**
+   ```sh
+   python3 src/badger.py --user-id YOUR_USER_ID --api-key YOUR_API_KEY --output [OUTPUT_PATH]
+   ```
+
+---
+
+## 📦 Integration
+
+Embed your badge in your GitHub README:
+
+```markdown
+![RootMeBadger](badge.png)
 ```
 
 ---
