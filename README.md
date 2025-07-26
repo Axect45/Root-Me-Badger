@@ -15,7 +15,7 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 
 ## 📸 Preview
 
-![RootMeBadger Example]()
+![RootMeBadger Example](badge.png)
 
 ---
 

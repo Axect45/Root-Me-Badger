@@ -1,5 +1,19 @@
 import requests
 
+rubrique_lookup_table = {
+    68: "Web - Server",
+    189: "App - Script",
+    203: "App - System",
+    208: "Forensic",
+    69: "Cracking",
+    16: "Web - Client",
+    18: "Cryptanalysis",
+    182: "Network",
+    17: "Programming",
+    67: "Steganography",
+    70: "Realist",
+}
+
 
 def get_rootme_user_info(user_id: int, api_key: str) -> dict:
     """
@@ -55,3 +69,46 @@ def download_rootme_image(url_path: str, save_path: str) -> bool:
     except requests.exceptions.RequestException as err:
         print(f"Error downloading image: {err}")
         return False
+
+
+def get_most_played_rubriques(user_data: dict) -> list:
+    """
+    Extracts the most played rubriques from user data.
+
+    Args:
+        user_data (dict): A dictionary containing user information.
+
+    Returns:
+        list: A list of the most played rubriques.
+    """
+    played_rubriques = {}
+    for challenge in user_data.get('validations', []):
+        id = challenge.get('id_rubrique', None)
+        if played_rubriques.get(id) is None:
+            played_rubriques[id] = 0
+        played_rubriques[id] += 1
+
+    return sorted(played_rubriques.items(), key=lambda x: x[1], reverse=True)
+
+
+def get_number_of_users(api_key: str) -> int:
+    """
+    Fetches the total number of users from Root-Me.
+
+    Args:
+        api_key (str): The Root-Me API KEY.
+
+    Returns:
+        int: The total number of users.
+    """
+    url = "https://api.www.root-me.org/auteurs?debut_auteurs=9999999"
+
+    try:
+        response = requests.get(url, cookies={"api_key": api_key})
+        response.raise_for_status()  # Raise an exception for HTTP errors
+
+        return int(list(response.json()[0].items())[-1][1].get('id_auteur'))
+
+    except requests.exceptions.RequestException as err:
+        print(f"Error fetching user count: {err}")
+        return 0

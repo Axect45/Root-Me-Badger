@@ -43,10 +43,16 @@ def main():
         print(f"Error fetching user data: {user_data['error']}")
         exit(1)
 
+    user_data["most_played"] = []
+    for rub, v in get_most_played_rubriques(user_data)[:3]:
+        user_data["most_played"].append((rubrique_lookup_table[int(rub)], v))
+
     print(f"User data fetched successfully: {user_data}")
 
     if (not download_rootme_image(user_data.get('logo_url'), "profile_picture.png")):
         exit(1)
+
+    user_data["total_users"] = get_number_of_users(args.api_key)
 
     create_badge(user_data)
 
