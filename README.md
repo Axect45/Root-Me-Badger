@@ -11,6 +11,9 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 
 ## 🚀 Features
 
+- Fetches your Root-Me stats automatically
+- Retrieve your points and position in the Root-Me ladder
+
 ---
 
 ## 📸 Preview
@@ -19,7 +22,11 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 
 ---
 
-## 🧰 Installation
+## 🛠️ Usage
+
+```
+badger.py --user-id USER_ID --api-key API_KEY [--output OUTPUT]
+```
 
 ---
 
@@ -29,11 +36,7 @@ Easily embed a live badge into your GitHub profile or repo README to showcase yo
 
 - [ ] Generate dynamic SVG badge
 
-- [ ] Deploy API endpoint for badge hosting (Vercel/Render)
-
 - [ ] Add GitHub Action workflow example
-
-- [ ] Add category-specific stats support
 
 - [ ] Add customization options (themes, layout)
 
