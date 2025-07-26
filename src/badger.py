@@ -25,7 +25,7 @@ from rootme import *
 from badge import *
 
 
-def main():
+def parse_args():
     parser = argparse.ArgumentParser(
         description="RootMeBadger - Generate a badge for Root-Me progress")
 
@@ -36,26 +36,41 @@ def main():
     parser.add_argument("--output", type=str, default="badge.png",
                         help="Output filename for the badge")
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main(args):
+    # Fetch user data from Root-Me API
     user_data = get_rootme_user_info(args.user_id, args.api_key)
     if (user_data.get('error')):
         print(f"Error fetching user data: {user_data['error']}")
         exit(1)
 
+    # Download the profile picture
+    if (not download_rootme_image(user_data.get('logo_url'), "profile_picture.png")):
+        exit(1)
+
+    # Retrieve the user's most played rubriques
     user_data["most_played"] = []
     for rub, v in get_most_played_rubriques(user_data)[:3]:
         user_data["most_played"].append((rubrique_lookup_table[int(rub)], v))
 
-    print(f"User data fetched successfully: {user_data}")
+    # Get the total number of users
+    # user_data["total_users"] = get_number_of_users(args.api_key)
+    # if (user_data["total_users"] < 0):
+    #     exit(1)
 
-    if (not download_rootme_image(user_data.get('logo_url'), "profile_picture.png")):
+    # Get the number of ranked users
+    user_data["total_users"] = get_number_of_ranked_users(args.api_key)
+    if (user_data["total_users"] < 0):
         exit(1)
 
-    user_data["total_users"] = get_number_of_users(args.api_key)
-
+    # Create the badge
     create_badge(user_data)
+
+    exit(0)
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    main(args)

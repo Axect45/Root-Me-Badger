@@ -111,4 +111,26 @@ def get_number_of_users(api_key: str) -> int:
 
     except requests.exceptions.RequestException as err:
         print(f"Error fetching user count: {err}")
-        return 0
+        return -1
+
+
+def get_number_of_ranked_users(api_key: str) -> int:
+    """
+    Fetches the total number of ranked users from Root-Me.
+
+    Args:
+        api_key (str): The Root-Me API KEY.
+    Returns:
+        int: The total number of ranked users.
+    """
+    url = "https://api.www.root-me.org/classement?debut_classement=9999999"
+
+    try:
+        response = requests.get(url, cookies={"api_key": api_key})
+        response.raise_for_status()  # Raise an exception for HTTP errors
+
+        return list(response.json()[0].items())[-1][1].get('place', -1)
+
+    except requests.exceptions.RequestException as err:
+        print(f"Error fetching ranked user count: {err}")
+        return -1
